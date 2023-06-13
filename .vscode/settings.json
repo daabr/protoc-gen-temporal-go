@@ -1,0 +1,11 @@
+{
+    "files.readonlyInclude": {
+        "**/*.pb.go": true
+    },
+    "protoc": {
+        "options": [
+            "--proto_path=proto/temporal",
+            "--proto_path=submodules/temporalio/api"
+        ]
+    }
+}

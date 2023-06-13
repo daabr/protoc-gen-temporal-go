@@ -1,0 +1,30 @@
+---
+lint:
+  rules:
+    all_default: true
+
+    remove:
+      - MAX_LINE_LENGTH
+      - FIELD_NAMES_EXCLUDE_PREPOSITIONS
+      - MESSAGES_HAVE_COMMENT
+      - FIELDS_HAVE_COMMENT
+
+  rules_option:
+    max_line_length:
+      max_chars: 80
+      tab_chars: 4
+
+    indent:
+      style: 4
+
+    quote_consistent:
+      quote: double
+
+    enum_field_names_zero_value_end_with:
+      suffix: UNSPECIFIED
+
+    services_have_comment:
+      should_follow_golang_style: true
+
+    rpcs_have_comment:
+      should_follow_golang_style: true
