@@ -87,5 +87,8 @@ func generateFile(p *protogen.Plugin, f *protogen.File, ver string) *protogen.Ge
 	filename := f.GeneratedFilenamePrefix + filenameSuffix
 	g := p.NewGeneratedFile(filename, f.GoImportPath)
 	generator.GenerateHeader(g, f, ver)
+	for _, service := range f.Services {
+		generator.GenerateWorker(g, service)
+	}
 	return g
 }
