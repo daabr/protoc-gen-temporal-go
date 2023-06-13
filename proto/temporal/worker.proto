@@ -1,0 +1,400 @@
+/*
+MIT License
+
+Copyright (c) 2023 Daniel Abraham
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
+
+syntax = "proto3";
+
+package temporal;
+
+import "google/protobuf/descriptor.proto";
+import "google/protobuf/duration.proto";
+import "temporal/api/common/v1/message.proto";
+import "temporal/api/enums/v1/workflow.proto";
+
+option go_package = "github.com/daabr/protoc-gen-temporal-go/proto/temporal";
+
+// WorkerOptions represents https://pkg.go.dev/go.temporal.io/sdk/worker#Options.
+// See also https://legacy-documentation-sdks.temporal.io/go/how-to-set-workeroptions-in-go.
+// TODO: Field comments.
+message WorkerOptions {
+    // Sets the maximum concurrent Activity Executions for the Worker.
+    //
+    // Optional: default = 0 = 1,000.
+    int32 max_concurrent_activity_execution_size = 1;
+
+    // Rate limits the number of Activity Task Executions started per second
+    // for the Worker. The intended use case is to limit resources used by the
+    // Worker. Notice that the value type is a float so that the value can be
+    // less than 1 if needed. For example, if set to 0.1, Activity Task
+    // Executions will happen once every 10 seconds. This can be used to
+    // protect downstream services from flooding with requests.
+    //
+    // See https://docs.temporal.io/tasks#activity-task-execution.
+    // Optional: default = 0 = 100,000.
+    double worker_activities_per_second = 2;
+
+    // Set the maximum concurrent Local Activity Executions for the Worker.
+    //
+    // See https://docs.temporal.io/activities#local-activity.
+    // Optional: default = 0 = 1,000.
+    int32 max_concurrent_local_activity_execution_size = 3;
+
+    // Rate limits the number of Local Activity Executions per second executed
+    // for the Worker. The intended use case is to limit resources used by the
+    // Worker. Notice that the value type is a float so that the value can be
+    // less than 1 if needed. For example, if set to 0.1, Local Activity Task
+    // Executions will happen once every 10 seconds. This can be used to
+    // protect downstream services from flooding with requests.
+    //
+    // See https://docs.temporal.io/tasks#activity-task-execution.
+    // Optional: default = 0 = 100,000.
+    double worker_local_activities_per_second = 4;
+
+    // Rate limits the number of Activity Executions that can be started per
+    // second. This rate is managed by the server and limits the Activity Tasks
+    // per second for the entire Task Queue, whereas [WorkerActivitiesPerSecond]
+    // controls activities only per worker. Notice that the value type is a
+    // float so that the value can be less than 1 if needed. For example, if
+    // set to 0.1, Activity Task Executions will happen once every 10 seconds.
+    // This can be used to protect downstream services from flooding with
+    // requests.
+    //
+    // See https://docs.temporal.io/tasks#activity-task-execution.
+    // Optional: default = 0 = 100,000.
+    double task_queue_activities_per_second = 5;
+
+    // Sets the maximum number of goroutines to concurrently poll the Task
+    // Queue for Activity Tasks. Changing this value will affect the rate at
+    // which the Worker is able to consume Activity Tasks from the Task Queue.
+    //
+    // Optional: default = 2.
+    int32 max_concurrent_activity_task_pollers = 6;
+
+    // Sets the maximum number of concurrent Workflow Task Executions the
+    // Worker can have. Due to internal logic where pollers alternate between
+    // sticky and non-sticky queues, the Worker will panic if this value is set
+    // to 1.
+    //
+    // Optional: default = 0 = 1,000.
+    int32 max_concurrent_workflow_task_execution_size = 7;
+
+    // Sets the maximum number of goroutines that will concurrently poll the
+    // Task Queue for Workflow Tasks. Changing this value will affect the rate
+    // at which the Worker is able to consume Workflow Tasks from the Task
+    // Queue. Due to internal logic where pollers alternate between sticky and
+    // non-sticky queues, the Worker will panic if this value is set to 1.
+    //
+    // Optional: default = 2.
+    int32 max_concurrent_workflow_task_pollers = 8;
+
+    // Enable logging in Workflow Execution replays. In Workflow Definitions
+    // you can use `workflow.GetLogger(ctx)` to write logs. By default, the
+    // logger will skip logging during replays, so you do not see duplicate
+    // logs. This is only really useful for debugging purpose.
+    //
+    // Optional: default = false.
+    bool enable_logging_in_replay = 9;
+
+    // Sticky Execution runs Workflow Tasks of a Workflow Execution on the same
+    // host (could be a different Worker, as long as it is on the same host).
+    // This is an optimization for Workflow Executions. When sticky execution
+    // is enabled, Worker keeps the Workflow state in memory. A new Workflow
+    // Task containing the new history events will be dispatched to the same
+    // Worker. If this Worker crashes, the sticky Workflow Task will time-out
+    // after [StickyScheduleToStartTimeout], and Temporal Cluster will clear
+    // the stickiness for that Workflow Execution and automatically reschedule
+    // a new Workflow Task that is available for any Worker to pick up and
+    // resume the progress.
+    //
+    // Optional: default = false.
+    //
+    // Deprecated: DisableStickyExecution harms performance. It will be removed
+    // soon. See `worker.SetStickyWorkflowCacheSize()` instead.
+    bool disable_sticky_execution = 10 [deprecated = true];
+
+    // The Sticky Execution Schedule-To-Start Timeout for Workflow Tasks. See
+    // details about sticky execution in [DisableStickyExecution].
+    //
+    // Optional: default = 5 seconds.
+    google.protobuf.Duration sticky_schedule_to_start_timeout = 11;
+
+    // TODO: BackgroundActivityContext context.Context
+
+    // TODO: WorkflowPanicPolicy WorkflowPanicPolicy
+
+    // The Worker's graceful stop timeout.
+    //
+    // Optional: default = 0 seconds.
+    google.protobuf.Duration worker_stop_timeout = 14;
+
+    bool enable_session_worker = 15;
+
+    bool disable_workflow_worker = 16;
+
+    bool local_activity_worker_only = 17;
+
+    string identity = 18;
+
+    google.protobuf.Duration deadlock_detection_timeout = 19;
+
+    google.protobuf.Duration max_heartbeat_throttle_interval = 20;
+
+    google.protobuf.Duration default_heartbeat_throttle_interval = 21;
+
+    // TODO: Interceptors []WorkerInterceptor
+
+    // TODO: OnFatalError func(error)
+
+    bool disable_eager_activities = 24;
+
+    int32 max_concurrent_eager_activity_execution_size = 25;
+
+    bool disable_registration_aliasing = 26;
+
+    string build_id = 27;
+
+    bool use_build_id_for_versioning = 28;
+}
+
+// StartWorkflowOptions represents https://pkg.go.dev/go.temporal.io/sdk/client#StartWorkflowOptions.
+// See also https://docs.temporal.io/dev-guide/go/foundations#start-workflow-execution.
+message StartWorkflowOptions {
+    // The business identifier of the workflow execution.
+    //
+    // See https://docs.temporal.io/workflows#workflow-id.
+    // Optional: default = system generated UUID.
+    string id = 1;
+
+    // Workflow tasks are scheduled on the queue with this name. This is also
+    // the name of the activity task queue on which activities are scheduled.
+    // The workflow author can choose to override this using activity options.
+    //
+    // See https://docs.temporal.io/tasks#task-queue.
+    // Required: no default.
+    string task_queue = 2;
+
+    // The maximum and total amount of time that a Workflow Execution can
+    // be executing, including retries and any usage of Continue-As-New.
+    //
+    // See https://docs.temporal.io/workflows#workflow-execution-timeout.
+    // See also https://docs.temporal.io/workflows#workflow-execution-chain.
+    // Optional: default = unlimited.
+    google.protobuf.Duration workflow_execution_timeout = 3;
+
+    // The maximum amount of time that a single Workflow Run is restricted to.
+    // If this timeout is reached, the Workflow Execution is terminated.
+    //
+    // See https://docs.temporal.io/workflows#workflow-run-timeout.
+    // Optional: default = [WorkflowExecutionTimeout].
+    google.protobuf.Duration workflow_run_timeout = 4;
+
+    // The maximum amount of time allowed for a Worker to execute a Workflow
+    // Task after the Worker has pulled that Workflow Task from the Task Queue.
+    // This timeout is primarily available to recognize whether a Worker has
+    // gone down so that the Workflow Execution can be recovered on a different
+    // Worker. The main reason for increasing the default value would be to
+    // accommodate a Workflow Execution that has a very long Workflow Execution
+    // History that could take longer than 10 seconds for the Worker to load.
+    //
+    // See https://docs.temporal.io/workflows#workflow-task-timeout.
+    // Optional: default = 10 secsonds.
+    google.protobuf.Duration workflow_task_timeout = 5;
+
+    // Whether the server should allow reuse of the workflow ID. Can be useful
+    // for dedupe logic if set to `WORKFLOW_ID_REUSE_POLICY_REJECT_DUPLICATE`.
+    //
+    // Optional: default = `WORKFLOW_ID_REUSE_POLICY_ALLOW_DUPLICATE`.
+    temporal.api.enums.v1.WorkflowIdReusePolicy workflow_id_reuse_policy = 6;
+
+    // When true, `Client.ExecuteWorkflow` will return an error if the workflow
+    // ID has already been used and [WorkflowIdReusePolicy] disallows re-runs.
+    // When false, rather than erroring, a `WorkflowRun` instance representing
+    // the current or last run will be returned.
+    //
+    // Optional: default = false.
+    bool workflow_execution_error_when_already_started = 7;
+
+    // Typically used in activities rather than workflows, but if a retry
+    // policy is specified the server will start a new workflow execution in
+    // case of a workflow failure. Either way retries will never exceed
+    // [WorkflowExecutionTimeout].
+    //
+    // See https://docs.temporal.io/retry-policies.
+    // Optional: default = none (no retries for workflows).
+    temporal.api.common.v1.RetryPolicy retry_policy = 8;
+
+    // If a cron schedule is specified, the workflow will run as a cron based
+    // on the schedule - See https://docs.temporal.io/workflows#temporal-cron-job
+    // for details.
+    //
+    // There are two supported specification formats: "classic" and "robfig" -
+    // see details in https://docs.temporal.io/workflows#temporal-cron-job.
+    // Cron Schedules are interpreted in UTC time by default, unless prefixed
+    // with `CRON_TZ` - see https://docs.temporal.io/workflows#time-zones for
+    // details and caveats.
+    //
+    // The Temporal Server starts the next Run only after the current Run has
+    // completed, failed, or reached the [WorkflowRunTimeout]. If [RetryPolicy]
+    // is also provided, and a Run fails or times-out, the Run will be retried
+    // until it completes or the retry policy has been exhausted. If the next
+    // Run, per the cron schedule, is due while the current Run is still Open
+    // (including retries), the Server will skip it.
+    //
+    // A cron workflow will not stop until it is terminated or canceled (by
+    // returning `temporal.CanceledError`).
+    string cron_schedule = 9;
+
+    // TODO: Memo map[string]interface{}
+
+    // TODO: SearchAttributes map[string]interface{}
+}
+
+// ActivityOptions represents https://pkg.go.dev/go.temporal.io/sdk/workflow#ActivityOptions.
+// See also https://docs.temporal.io/activities#activity-execution.
+message ActivityOptions {
+    // The task queue that the activity needs to be scheduled on.
+    //
+    // See https://docs.temporal.io/tasks#task-queue.
+    // Optional: default = the workflow's task queue.
+    string task_queue = 1;
+
+    // The maximum amount of time allowed for the overall Activity Execution,
+    // from when the first Activity Task is scheduled to when the last Activity
+    // Task, in the chain of Activity Tasks that make up the Activity Execution
+    // (including retries), reaches a Closed status.
+    //
+    // An Activity Execution must have either this timeout (Schedule-To-Close)
+    // or [StartToCloseTimeout] set. By default, an Activity Execution Retry
+    // Policy dictates that retries will occur for up to 10 years. This timeout
+    // can be used to control the overall duration of an Activity Execution in
+    // the face of failures (repeated Activity Task Executions), without
+    // altering the Maximum Attempts field of the Retry Policy.
+    //
+    // See https://docs.temporal.io/activities#schedule-to-close-timeout.
+    // Optional: default = unlimited.
+    google.protobuf.Duration schedule_to_close_timeout = 2;
+
+    // The maximum amount of time that is allowed from when an Activity Task
+    // is scheduled (that is, placed in a Task Queue) to when a Worker starts
+    // (that is, picks up from the Task Queue) that Activity Task. In other
+    // words, it's a limit for how long an Activity Task can be enqueued.
+    //
+    // If this timeout is used, we recommend setting this timeout to the
+    // maximum time a Workflow Execution is willing to wait for an Activity
+    // Execution in the presence of all possible Worker outages, and have a
+    // concrete plan in place to reroute Activity Tasks to a different Task
+    // Queue. This timeout does not trigger any retries regardless of the Retry
+    // Policy, as a retry would place the Activity Task back into the same Task
+    // Queue. We do not recommend using this timeout unless you know what you
+    // are doing.
+    //
+    // See https://docs.temporal.io/activities#schedule-to-start-timeout.
+    // Optional: default = unlimited.
+    google.protobuf.Duration schedule_to_start_timeout = 3;
+
+    // The maximum time allowed for a single Activity Task Execution.
+    //
+    // An Activity Execution must have either this timeout (Start-To-Close)
+    // or the Schedule-To-Close Timeout set. We recommend always setting this
+    // timeout; however, make sure that it is always set to be longer than the
+    // maximum possible time for the Activity Execution to take place. For long
+    // running Activity Executions, we recommend also using Activity Heartbeats
+    // (`Activity.RecordHeartbeat`) and Heartbeat Timeouts.
+    //
+    // The main use case for the Start-To-Close timeout is to detect when a
+    // Worker crashes after it has started executing an Activity Task.
+    //
+    // A Retry Policy attached to an Activity Execution retries an Activity
+    // Task Execution. Thus, the Start-To-Close Timeout is applied to each
+    // Activity Task Execution within an Activity Execution.
+    //
+    // See https://docs.temporal.io/activities#start-to-close-timeout.
+    // Optional: default = [ScheduleToCloseTimeout].
+    google.protobuf.Duration start_to_close_timeout = 4;
+
+    // The maximum time allowed after the Activity starts, and between Activity
+    // Heartbeats (calls to `Activity.RecordHeartbeat`). If this timeout is
+    // reached, the Activity Task fails and a retry occurs if a Retry Policy
+    // dictates it.
+    //
+    // See https://docs.temporal.io/activities#activity-heartbeat and
+    // https://docs.temporal.io/activities#heartbeat-timeout.
+    // Optional: default = unlimited.
+    google.protobuf.Duration heartbeat_timeout = 5;
+
+    // TODO: Field comment.
+    // See https://docs.temporal.io/activities#cancellation.
+    // Optional: default = false.
+    bool wait_for_cancellation = 6;
+
+    // TODO: Field comment.
+    // See https://docs.temporal.io/activities#activity-id.
+    // Optional: default = empty string.
+    string activity_id = 7;
+
+    // To disable retries set Maximum Attempts to 1.
+    // See https://docs.temporal.io/retry-policies for details.
+    // Optional: default =
+    //   Initial Interval     = 1 second
+    //   Backoff Coefficient  = 2.0
+    //   Maximum Interval     = 100 × Initial Interval
+    //   Maximum Attempts     = 0 (unlimited)
+    //   Non-Retryable Errors = none
+    temporal.api.common.v1.RetryPolicy retry_policy = 8;
+
+    // If true, will not request eager execution regardless of worker settings.
+    // If false, eager execution may still be disabled at the worker level or
+    // eager execution may not be requested due to lack of available slots.
+    //
+    // Eager activity execution means the server returns requested eager
+    // activities directly from the workflow task back to this worker which is
+    // faster than non-eager which may be dispatched to a separate worker.
+    bool disable_eager_execution = 9;
+
+    // TODO: VersioningIntent versioning_intent
+}
+
+message Worker {
+    string        task_queue = 1;
+    WorkerOptions options    = 2;
+}
+
+message Workflow {
+    StartWorkflowOptions options = 1;
+}
+
+message Activity {
+    ActivityOptions options = 1;
+}
+
+extend google.protobuf.ServiceOptions {
+    Worker worker = 7233;
+}
+
+extend google.protobuf.MethodOptions {
+    Workflow workflow = 7234;
+}
+
+extend google.protobuf.MethodOptions {
+    Activity activity = 7235;
+}
