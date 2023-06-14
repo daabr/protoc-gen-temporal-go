@@ -27,6 +27,7 @@ package generator
 import (
 	"google.golang.org/protobuf/compiler/protogen"
 	"google.golang.org/protobuf/proto"
+	"google.golang.org/protobuf/types/known/durationpb"
 
 	workerpb "github.com/daabr/protoc-gen-temporal-go/proto/temporal"
 )
@@ -56,19 +57,132 @@ func GenerateWorker(g *protogen.GeneratedFile, service *protogen.Service) {
 
 func nonDefaultWorkerOptions(g *protogen.GeneratedFile, o *workerpb.WorkerOptions) {
 	options := []struct {
-		goName       string
-		value        interface{}
-		defaultValue interface{}
+		value  interface{}
+		goName string
 	}{
 		{
-			"MaxConcurrentActivityExecutionSize",
 			o.MaxConcurrentActivityExecutionSize,
-			0,
+			"MaxConcurrentActivityExecutionSize",
+		},
+		{
+			o.WorkerActivitiesPerSecond,
+			"WorkerActivitiesPerSecond",
+		},
+		{
+			o.MaxConcurrentLocalActivityExecutionSize,
+			"MaxConcurrentLocalActivityExecutionSize",
+		},
+		{
+			o.WorkerLocalActivitiesPerSecond,
+			"WorkerLocalActivitiesPerSecond",
+		},
+		{
+			o.TaskQueueActivitiesPerSecond,
+			"TaskQueueActivitiesPerSecond",
+		},
+		{
+			o.MaxConcurrentActivityTaskPollers,
+			"MaxConcurrentActivityTaskPollers",
+		},
+		{
+			o.MaxConcurrentWorkflowTaskExecutionSize,
+			"MaxConcurrentWorkflowTaskExecutionSize",
+		},
+		{
+			o.MaxConcurrentWorkflowTaskPollers,
+			"MaxConcurrentWorkflowTaskPollers",
+		},
+		{
+			o.EnableLoggingInReplay,
+			"EnableLoggingInReplay",
+		},
+		// Deprecated: DisableStickyExecution
+		{
+			o.StickyScheduleToStartTimeout,
+			"StickyScheduleToStartTimeout",
+		},
+		// TODO: BackgroundActivityContext
+		// TODO: WorkflowPanicPolicy
+		{
+			o.WorkerStopTimeout,
+			"WorkerStopTimeout",
+		},
+		{
+			o.EnableSessionWorker,
+			"EnableSessionWorker",
+		},
+		{
+			o.MaxConcurrentSessionExecutionSize,
+			"MaxConcurrentSessionExecutionSize",
+		},
+		{
+			o.DisableWorkflowWorker,
+			"DisableWorkflowWorker",
+		},
+		{
+			o.LocalActivityWorkerOnly,
+			"LocalActivityWorkerOnly",
+		},
+		{
+			o.Identity,
+			"Identity",
+		},
+		{
+			o.DeadlockDetectionTimeout,
+			"DeadlockDetectionTimeout",
+		},
+		{
+			o.MaxHeartbeatThrottleInterval,
+			"MaxHeartbeatThrottleInterval",
+		},
+		{
+			o.DefaultHeartbeatThrottleInterval,
+			"DefaultHeartbeatThrottleInterval",
+		},
+		// TODO: Interceptors []WorkerInterceptor
+		// TODO: OnFatalError func(error)
+		{
+			o.DisableEagerActivities,
+			"DisableEagerActivities",
+		},
+		{
+			o.MaxConcurrentEagerActivityExecutionSize,
+			"MaxConcurrentEagerActivityExecutionSize",
+		},
+		{
+			o.DisableRegistrationAliasing,
+			"DisableRegistrationAliasing",
+		},
+		{
+			o.BuildId,
+			"BuildID",
+		},
+		{
+			o.UseBuildIdForVersioning,
+			"UseBuildIDForVersioning",
 		},
 	}
 	for _, option := range options {
-		if option.value != option.defaultValue {
-			g.P(option.goName, ": ", option.value, ",")
+		if v, ok := option.value.(bool); ok && v {
+			g.P(option.goName, ": ", v, ",")
+			continue
+		}
+		if v, ok := option.value.(float64); ok && v != 0 {
+			g.P(option.goName, ": ", v, ",")
+			continue
+		}
+		if v, ok := option.value.(int32); ok && v != 0 {
+			g.P(option.goName, ": ", v, ",")
+			continue
+		}
+		if v, ok := option.value.(string); ok && v != "" {
+			g.P(option.goName, `: "`, v, `",`)
+			continue
+		}
+		if v, ok := option.value.(*durationpb.Duration); ok && v != nil {
+			s := v.AsDuration().Seconds()
+			g.P(option.goName, ": ", timePackage.Ident("Duration"), "(", s, " * float64(time.Second)),")
+			continue
 		}
 	}
 }

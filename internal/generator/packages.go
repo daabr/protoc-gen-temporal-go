@@ -31,6 +31,7 @@ import (
 const (
 	contextPackage = protogen.GoImportPath("context")
 	logPackage     = protogen.GoImportPath("log")
+	timePackage    = protogen.GoImportPath("time")
 
 	clientPackage   = protogen.GoImportPath("go.temporal.io/sdk/client")
 	workerPackage   = protogen.GoImportPath("go.temporal.io/sdk/worker")

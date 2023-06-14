@@ -149,31 +149,33 @@ message WorkerOptions {
 
     bool enable_session_worker = 15;
 
-    bool disable_workflow_worker = 16;
+    int32 max_concurrent_session_execution_size = 16;
 
-    bool local_activity_worker_only = 17;
+    bool disable_workflow_worker = 17;
 
-    string identity = 18;
+    bool local_activity_worker_only = 18;
 
-    google.protobuf.Duration deadlock_detection_timeout = 19;
+    string identity = 19;
 
-    google.protobuf.Duration max_heartbeat_throttle_interval = 20;
+    google.protobuf.Duration deadlock_detection_timeout = 20;
 
-    google.protobuf.Duration default_heartbeat_throttle_interval = 21;
+    google.protobuf.Duration max_heartbeat_throttle_interval = 21;
+
+    google.protobuf.Duration default_heartbeat_throttle_interval = 22;
 
     // TODO: Interceptors []WorkerInterceptor
 
     // TODO: OnFatalError func(error)
 
-    bool disable_eager_activities = 24;
+    bool disable_eager_activities = 25;
 
-    int32 max_concurrent_eager_activity_execution_size = 25;
+    int32 max_concurrent_eager_activity_execution_size = 26;
 
-    bool disable_registration_aliasing = 26;
+    bool disable_registration_aliasing = 27;
 
-    string build_id = 27;
+    string build_id = 28;
 
-    bool use_build_id_for_versioning = 28;
+    bool use_build_id_for_versioning = 29;
 }
 
 // StartWorkflowOptions represents https://pkg.go.dev/go.temporal.io/sdk/client#StartWorkflowOptions.
