@@ -37,13 +37,14 @@ func GenerateWorker(g *protogen.GeneratedFile, service *protogen.Service) {
 	g.P("func StartWorker", service.GoName, "(c ", clientPackage.Ident("Client"), ") {")
 	g.P(`taskQueue := "`, worker.TaskQueue, `"`)
 	g.P("workerOptions := ", workerPackage.Ident("Options"), "{")
-	// TODO: Populate `worker.Options` in the generated file,
-	// based on `worker.options` in the proto file.
+	nonDefaultWorkerOptions(g, worker.Options)
 	g.P("}")
 
 	g.P("w := ", workerPackage.Ident("New"), "(c, taskQueue, workerOptions)")
 	g.P()
-	// TODO: Register workflows and activities.
+
+	registerWorkerMethods(g, service.Methods)
+	g.P()
 
 	g.P("if err := w.Run(", workerPackage.Ident("InterruptCh"), "()); err != nil {")
 	g.P(logPackage.Ident("Fatalln"), `("Failed to start Temporal worker:", err)`)
@@ -51,4 +52,34 @@ func GenerateWorker(g *protogen.GeneratedFile, service *protogen.Service) {
 
 	g.P("}")
 	g.P()
+}
+
+func nonDefaultWorkerOptions(g *protogen.GeneratedFile, o *workerpb.WorkerOptions) {
+	options := []struct {
+		goName       string
+		value        interface{}
+		defaultValue interface{}
+	}{
+		{
+			"MaxConcurrentActivityExecutionSize",
+			o.MaxConcurrentActivityExecutionSize,
+			0,
+		},
+	}
+	for _, option := range options {
+		if option.value != option.defaultValue {
+			g.P(option.goName, ": ", option.value, ",")
+		}
+	}
+}
+
+func registerWorkerMethods(g *protogen.GeneratedFile, methods []*protogen.Method) {
+	for _, m := range methods {
+		w := proto.GetExtension(m.Desc.Options(), workerpb.E_Workflow).(*workerpb.Workflow)
+		if w != nil {
+			g.P("w.RegisterWorkflow(", m.GoName, ")")
+		} else {
+			g.P("w.RegisterActivity(", m.GoName, ")")
+		}
+	}
 }
