@@ -34,14 +34,20 @@ import (
 
 func GenerateWorker(g *protogen.GeneratedFile, service *protogen.Service) {
 	worker := proto.GetExtension(service.Desc.Options(), workerpb.E_Worker).(*workerpb.Worker)
+	if worker == nil || worker.TaskQueue == "" {
+		g.Skip()
+		return
+	}
 
 	g.P("func StartWorker", service.GoName, "(c ", clientPackage.Ident("Client"), ") {")
 	g.P(`taskQueue := "`, worker.TaskQueue, `"`)
-	g.P("workerOptions := ", workerPackage.Ident("Options"), "{")
-	nonDefaultWorkerOptions(g, worker.Options)
+	g.P("opts := ", workerPackage.Ident("Options"), "{")
+	if worker.Options != nil {
+		nonDefaultWorkerOptions(g, worker.Options)
+	}
 	g.P("}")
 
-	g.P("w := ", workerPackage.Ident("New"), "(c, taskQueue, workerOptions)")
+	g.P("w := ", workerPackage.Ident("New"), "(c, taskQueue, opts)")
 	g.P()
 
 	registerWorkerMethods(g, service.Methods)
