@@ -7,6 +7,7 @@ lint:
       - MAX_LINE_LENGTH
       - FIELD_NAMES_EXCLUDE_PREPOSITIONS
       - MESSAGES_HAVE_COMMENT
+      - SERVICES_HAVE_COMMENT
       - FIELDS_HAVE_COMMENT
       - ENUMS_HAVE_COMMENT
       - ENUM_FIELDS_HAVE_COMMENT
@@ -24,9 +25,6 @@ lint:
 
     enum_field_names_zero_value_end_with:
       suffix: UNSPECIFIED
-
-    services_have_comment:
-      should_follow_golang_style: true
 
     rpcs_have_comment:
       should_follow_golang_style: true
