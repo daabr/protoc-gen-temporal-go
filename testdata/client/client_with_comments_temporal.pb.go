@@ -25,9 +25,9 @@
 // versions:
 // - protoc-gen-temporal-go v0.0.0
 // - protoc                 v4.23.2
-// source: worker_without_options.proto
+// source: client_with_comments.proto
 
-package worker
+package client
 
 import (
 	client "go.temporal.io/sdk/client"
@@ -35,7 +35,7 @@ import (
 	log "log"
 )
 
-func StartWorkerWorkerWithoutOptions(c client.Client) {
+func StartWorkerWorkerWithComments(c client.Client) {
 	taskQueue := "my-task-queue"
 	opts := worker.Options{}
 	w := worker.New(c, taskQueue, opts)
@@ -45,13 +45,16 @@ func StartWorkerWorkerWithoutOptions(c client.Client) {
 	}
 }
 
-type WorkerWithoutOptionsTemporalClient interface {
+// WorkerWithComments leading comment.
+type WorkerWithCommentsTemporalClient interface { // Trailing comments.
+
 }
 
-type workerWithoutOptionsTemporalClient struct {
+type workerWithCommentsTemporalClient struct {
 	t client.Client
 }
 
-func NewWorkerWithoutOptionsTemporalClient(c client.Client) *WorkerWithoutOptionsTemporalClient {
-	return &workerWithoutOptionsTemporalClient{c}
+// WorkerWithComments leading comment.
+func NewWorkerWithCommentsTemporalClient(c client.Client) *WorkerWithCommentsTemporalClient {
+	return &workerWithCommentsTemporalClient{c}
 }

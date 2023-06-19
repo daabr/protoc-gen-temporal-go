@@ -51,7 +51,9 @@ import (
 	"github.com/daabr/protoc-gen-temporal-go/internal/generator"
 )
 
-const filenameSuffix = "_temporal.pb.go"
+const (
+	filenameSuffix = "_temporal.pb.go"
+)
 
 func main() {
 	showVersion := flag.Bool("version", false, "print the version and exit")
@@ -94,6 +96,7 @@ func generateFile(p *protogen.Plugin, f *protogen.File, ver string) *protogen.Ge
 	generator.GenerateHeader(g, f, ver)
 	for _, service := range f.Services {
 		generator.GenerateWorker(g, service)
+		generator.GenerateClient(g, service)
 	}
 	return g
 }

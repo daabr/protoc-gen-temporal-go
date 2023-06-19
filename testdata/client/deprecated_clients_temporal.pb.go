@@ -25,9 +25,9 @@
 // versions:
 // - protoc-gen-temporal-go v0.0.0
 // - protoc                 v4.23.2
-// source: worker_without_options.proto
+// source: deprecated_clients.proto
 
-package worker
+package client
 
 import (
 	client "go.temporal.io/sdk/client"
@@ -35,7 +35,7 @@ import (
 	log "log"
 )
 
-func StartWorkerWorkerWithoutOptions(c client.Client) {
+func StartWorkerDeprecatedWorkerWithComments(c client.Client) {
 	taskQueue := "my-task-queue"
 	opts := worker.Options{}
 	w := worker.New(c, taskQueue, opts)
@@ -45,13 +45,43 @@ func StartWorkerWorkerWithoutOptions(c client.Client) {
 	}
 }
 
-type WorkerWithoutOptionsTemporalClient interface {
+// DeprecatedWorkerWithComments leading comment.
+//
+// Deprecated: Do not use.
+type DeprecatedWorkerWithCommentsTemporalClient interface { // Trailing comments.
+
 }
 
-type workerWithoutOptionsTemporalClient struct {
+type deprecatedWorkerWithCommentsTemporalClient struct {
 	t client.Client
 }
 
-func NewWorkerWithoutOptionsTemporalClient(c client.Client) *WorkerWithoutOptionsTemporalClient {
-	return &workerWithoutOptionsTemporalClient{c}
+// DeprecatedWorkerWithComments leading comment.
+//
+// Deprecated: Do not use.
+func NewDeprecatedWorkerWithCommentsTemporalClient(c client.Client) *DeprecatedWorkerWithCommentsTemporalClient {
+	return &deprecatedWorkerWithCommentsTemporalClient{c}
+}
+
+func StartWorkerDeprecatedWorkerWithoutComments(c client.Client) {
+	taskQueue := "my-task-queue"
+	opts := worker.Options{}
+	w := worker.New(c, taskQueue, opts)
+
+	if err := w.Run(worker.InterruptCh()); err != nil {
+		log.Fatalln("Failed to start Temporal worker:", err)
+	}
+}
+
+// Deprecated: Do not use.
+type DeprecatedWorkerWithoutCommentsTemporalClient interface {
+}
+
+type deprecatedWorkerWithoutCommentsTemporalClient struct {
+	t client.Client
+}
+
+// Deprecated: Do not use.
+func NewDeprecatedWorkerWithoutCommentsTemporalClient(c client.Client) *DeprecatedWorkerWithoutCommentsTemporalClient {
+	return &deprecatedWorkerWithoutCommentsTemporalClient{c}
 }

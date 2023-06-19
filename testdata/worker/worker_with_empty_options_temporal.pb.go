@@ -44,3 +44,14 @@ func StartWorkerWorkerWithEmptyOptions(c client.Client) {
 		log.Fatalln("Failed to start Temporal worker:", err)
 	}
 }
+
+type WorkerWithEmptyOptionsTemporalClient interface {
+}
+
+type workerWithEmptyOptionsTemporalClient struct {
+	t client.Client
+}
+
+func NewWorkerWithEmptyOptionsTemporalClient(c client.Client) *WorkerWithEmptyOptionsTemporalClient {
+	return &workerWithEmptyOptionsTemporalClient{c}
+}
