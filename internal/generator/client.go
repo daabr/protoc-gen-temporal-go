@@ -59,7 +59,17 @@ func GenerateClient(g *protogen.GeneratedFile, service *protogen.Service) {
 	g.P("}")
 	g.P()
 
-	// TODO: Helper methods for executing workflows and activities.
+	// Helper methods for executing workflows and activities.
+	for _, method := range service.Methods {
+		if isWorkflow(method) {
+			startWorkflow(g, method, structName, service.GoName)
+			executeWorkflow(g, method, structName, service.GoName)
+
+			startChildWorkflow(g, method, structName, service.GoName)
+			executeChildWorkflow(g, method, structName, service.GoName)
+		}
+		// TODO: else (activity)
+	}
 }
 
 func exportedInterface(g *protogen.GeneratedFile, service *protogen.Service, interfaceName string) {
@@ -125,4 +135,12 @@ func isWorkflow(method *protogen.Method) bool {
 
 func unexport(s string) string {
 	return strings.ToLower(s[:1]) + s[1:]
+}
+
+func executePrefix(g *protogen.GeneratedFile, method *protogen.Method, comment []string, structName, action, serviceName, ctx, in, out string) {
+	methodComment(g, method, comment)
+
+	s := "func (c *%s) %s%s%s(ctx %s, in *%s) %s {"
+	s = fmt.Sprintf(s, structName, action, serviceName, method.GoName, ctx, in, out)
+	g.P(s, method.Comments.Trailing)
 }
