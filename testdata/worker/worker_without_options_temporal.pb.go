@@ -25,7 +25,7 @@
 // versions:
 // - protoc-gen-temporal-go v0.0.0
 // - protoc                 v4.23.2
-// source: 4_worker_without_options.proto
+// source: worker_without_options.proto
 
 package worker
 

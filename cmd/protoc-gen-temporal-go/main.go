@@ -23,16 +23,21 @@ SOFTWARE.
 */
 
 // Protoc-gen-temporal-go is a [protoc] plugin which generates Go language
-// bindings for [Temporal] workers, comprising their workflows and activities,
-// based on [proto3] service definitions. This enforces correctness and
-// consistency while reducing boilerplate.
+// bindings for [Temporal] workers with their workflows and activities, based
+// on service definitions [protocol-buffer] files.
 //
-// Background - a talk by [Jacob LeGrone] from [Datadog]:
-// <https://www.youtube.com/watch?v=LxgkAoTSI8Q&t=633s>.
+// This methodology enables easier and safer usage of Temporal: it enforces
+// correctness and consistency within and across workers, intorduces best
+// practices seamlessly, reduces manually-written boilerplate, and improves
+// documentation and discoverability for developers and users.
+//
+// Inspiration and background: a [public talk] by [Jacob LeGrone] from
+// [Datadog].
 //
 // [protoc]: https://protobuf.dev/reference/go/go-generated/
 // [Temporal]: https://temporal.io/
-// [proto3]: https://protobuf.dev/programming-guides/proto3/
+// [protocol-buffer]: https://protobuf.dev/programming-guides/proto3/
+// [public talk]: https://www.youtube.com/watch?v=LxgkAoTSI8Q&t=680s
 // [Jacob LeGrone]: https://github.com/jlegrone
 // [Datadog]: https://www.datadoghq.com/
 package main

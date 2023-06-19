@@ -25,7 +25,7 @@
 // versions:
 // - protoc-gen-temporal-go v0.0.0
 // - protoc                 v4.23.2
-// source: 6_worker_with_options.proto
+// source: worker_with_empty_options.proto
 
 package worker
 
@@ -33,18 +33,11 @@ import (
 	client "go.temporal.io/sdk/client"
 	worker "go.temporal.io/sdk/worker"
 	log "log"
-	time "time"
 )
 
-func StartWorkerWorkerWithOptions(c client.Client) {
+func StartWorkerWorkerWithEmptyOptions(c client.Client) {
 	taskQueue := "my-task-queue"
-	opts := worker.Options{
-		MaxConcurrentActivityExecutionSize: 100,
-		WorkerActivitiesPerSecond:          0.1,
-		EnableLoggingInReplay:              true,
-		StickyScheduleToStartTimeout:       time.Duration(10.000000001 * float64(time.Second)),
-		Identity:                           "foo",
-	}
+	opts := worker.Options{}
 	w := worker.New(c, taskQueue, opts)
 
 	if err := w.Run(worker.InterruptCh()); err != nil {
