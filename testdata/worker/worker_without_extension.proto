@@ -24,9 +24,9 @@ SOFTWARE.
 
 syntax = "proto3";
 
-package test;
+package worker;
 
-option go_package = "github.com/daabr/protoc-gen-temporal-go/test/worker";
+option go_package = "github.com/daabr/protoc-gen-temporal-go/testdata/worker";
 
 service WorkerWithoutExtension {
 }

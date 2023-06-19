@@ -24,11 +24,11 @@ SOFTWARE.
 
 syntax = "proto3";
 
-package test;
+package worker;
 
 import "temporal/worker.proto";
 
-option go_package = "github.com/daabr/protoc-gen-temporal-go/test/worker";
+option go_package = "github.com/daabr/protoc-gen-temporal-go/testdata/worker";
 
 service WorkerWithEmptyTaskQueue {
     option (temporal.worker).task_queue = "";
