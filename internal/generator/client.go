@@ -67,8 +67,13 @@ func GenerateClient(g *protogen.GeneratedFile, service *protogen.Service) {
 
 			startChildWorkflow(g, method, structName, service.GoName)
 			executeChildWorkflow(g, method, structName, service.GoName)
+		} else {
+			startActivity(g, method, structName, service.GoName)
+			executeActivity(g, method, structName, service.GoName)
+
+			startLocalActivity(g, method, structName, service.GoName)
+			executeLocalActivity(g, method, structName, service.GoName)
 		}
-		// TODO: else (activity)
 	}
 }
 
