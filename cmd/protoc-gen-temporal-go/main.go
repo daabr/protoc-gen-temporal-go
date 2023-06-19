@@ -31,15 +31,19 @@ SOFTWARE.
 // practices seamlessly, reduces manually-written boilerplate, and improves
 // documentation and discoverability for developers and users.
 //
-// Inspiration and background: a [public talk] by [Jacob LeGrone] from
-// [Datadog].
+// Inspiration and background:
+// * [Public talk] by [Jacob LeGrone] from [Datadog] in Replay 2022
+// * [Another talk] by [Drew Hoskins] from [Stripe] in Replay 2022
 //
 // [protoc]: https://protobuf.dev/reference/go/go-generated/
 // [Temporal]: https://temporal.io/
 // [protocol-buffer]: https://protobuf.dev/programming-guides/proto3/
-// [public talk]: https://www.youtube.com/watch?v=LxgkAoTSI8Q&t=680s
+// [Public talk]: https://www.youtube.com/watch?v=LxgkAoTSI8Q&t=680s
 // [Jacob LeGrone]: https://github.com/jlegrone
 // [Datadog]: https://www.datadoghq.com/
+// [Another talk]: https://www.youtube.com/watch?v=yeoawVIn060
+// [Drew Hoskins]: https://github.com/drewhoskins-stripe
+// [Stripe]: https://stripe.com/
 package main
 
 import (

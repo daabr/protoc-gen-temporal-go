@@ -10,8 +10,12 @@ correctness and consistency within and across workers, intorduces best
 practices seamlessly, reduces manually-written boilerplate, and improves
 documentation and discoverability for developers and users.
 
-Inspiration and background: a [public talk](https://www.youtube.com/watch?v=LxgkAoTSI8Q&t=680s)
-by [Jacob LeGrone](https://github.com/jlegrone) from [Datadog](https://www.datadoghq.com/).
+Inspiration and background:
+
+* [Public talk](https://www.youtube.com/watch?v=LxgkAoTSI8Q&t=680s) by [Jacob LeGrone](https://github.com/jlegrone)
+  from [Datadog](https://www.datadoghq.com/) in Replay 2022
+* [Another talk](https://www.youtube.com/watch?v=yeoawVIn060) by [Drew Hoskins](https://github.com/drewhoskins-stripe)
+  from [Stripe](https://stripe.com/) in Replay 2022
 
 FYI:
 
